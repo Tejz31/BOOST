@@ -14,7 +14,7 @@ button{padding:12px 22px;border:none;border-radius:25px;margin:10px;font-size:16
 .no{background:#ddd}
 .heart{position:absolute;color:#ff7aa2;animation:float 7s linear infinite}
 @keyframes float{from{transform:translateY(100vh);opacity:1}to{transform:translateY(-10vh);opacity:0}}
-.final-photo{display:block;margin:10px auto;max-width:70vw;width:200px;height:auto;border-radius:18px;box-shadow:0 8px 20px rgba(0,0,0,.25);} 
+.final-photo{display:block;margin:10px auto;max-width:90vw;width:340px;height:auto;border-radius:18px;box-shadow:0 8px 20px rgba(0,0,0,.25);} 
 </style>
 </head>
 <body>
@@ -51,6 +51,7 @@ const questions=[
 let qIndex=0;
 
 function startQuiz(){
+  qIndex=0;
   const btns=document.getElementById('buttons');
   if(btns) btns.remove();
   showQuestion();
@@ -59,12 +60,13 @@ function startQuiz(){
 function showQuestion(){
   const card=document.getElementById('card');
   const q=questions[qIndex];
+  if(!q){ finishLove(); return; }
   card.innerHTML=`<h2>${q.q}</h2><div id='opts'></div><p id='response'></p>`;
   const box=document.getElementById('opts');
   q.options.forEach((opt,i)=>{
     const btn=document.createElement('button');
     btn.textContent=opt;
-    btn.onclick=()=>checkAnswer(i+1);
+    btn.onclick=()=>{ document.querySelectorAll('#opts button').forEach(b=>b.disabled=true); checkAnswer(i+1); };
     box.appendChild(btn);
   });
 }
@@ -72,9 +74,18 @@ function showQuestion(){
 function checkAnswer(choice){
   const res=document.getElementById('response');
   if(choice===questions[qIndex].correct){
-    res.textContent='Aww you remember 🥹❤️';
+    // hide cute message for Q1,2,3,5,6 (index 0,1,2,4,5)
+    if([0,1,2,4,5].includes(qIndex)){
+      res.textContent='';
+    }else{
+      res.textContent='Aww you remember 🥹❤️';
+    }
     setTimeout(nextQ,1200);
   }else{
+    res.textContent="Hmm wrong 😤 wait… we'll discuss later!";
+    setTimeout(nextQ,1500);
+  }
+}else{
     res.textContent="Hmm wrong 😤 wait… we'll discuss later!";
     setTimeout(nextQ,1500);
   }
@@ -87,13 +98,16 @@ function nextQ(){
   }else{
     finishLove();
   }
+}else{
+    finishLove();
+  }
 }
 
 function finishLove(){
   document.getElementById('card').innerHTML=`
-    <h2 style='margin-bottom:20px'>Happy Valentine's Day 💖</h2>
+    <h2 style='margin-bottom:20px;font-weight:bold;font-style:italic'><b><i>Happy Valentine's Day 💖</i></b></h2>
     <img src='photo.jpg' class='final-photo'>
-    <h1 style='margin-top:20px'>I LOVE YOU ❤️</h1>
+    <h1 style='margin-top:20px;font-family:"Dancing Script",cursive;font-weight:bold;font-style:italic'><b><i>I LOVE YOU ❤️</i></b></h1>
   `;
 }
 
